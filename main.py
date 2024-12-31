@@ -31,7 +31,9 @@ async def cleanup_old_files():
                     file_time = datetime.strptime(timestamp_str, "%Y%m%d%H%M%S")
 
                     # Check if the file is older than 8 hours
-                    if now - file_time > timedelta(hours=8):
+                    if now - file_time > timedelta(hours=32) and os.path.exists(
+                            file_path
+                    ):
                         os.remove(file_path)
                         print(f"Deleted old file: {filename}")
                 except Exception as e:

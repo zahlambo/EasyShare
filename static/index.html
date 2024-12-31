@@ -10,18 +10,18 @@
     <!-- Navbar with Dark Mode Switch -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand text-primary" href="/">EasyShares</a>
+            <a class="navbar-brand text-primary" href="/">EasyShare</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/files">Shared Files</a>
-                    </li>
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link nav-link-color" href="/">Home</a>-->
+<!--                    </li>-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class="nav-link nav-link-color" href="/files">Shared Files</a>-->
+<!--                    </li>-->
                 </ul>
                 <!-- Dark mode toggle switch -->
                 <div class="form-check form-switch ms-3">
@@ -33,11 +33,11 @@
     </nav>
 
     <div class="container mt-5">
-        <h1 class="text-center text-primary mb-4">EasyShares</h1>
+        <h1 class="text-center text-primary mb-4">EasyShare</h1>
         <form id="upload-form" class="p-4 border rounded shadow-sm">
             <div id="file-input-container" class="mb-3">
                 <label for="file-upload" class="form-label">Select Files:</label>
-                <input type="file" name="files" class="form-control" id="file-upload" required />
+                <input type="file" name="files" class="form-control" id="file-upload" multiple required />
             </div>
             <button type="button" id="add-file-button" class="btn btn-sm btn-secondary mb-3">Add Another File</button>
             <br />
@@ -53,9 +53,9 @@
         <div id="link-container" class="link mt-4"></div>
     </div>
 
-    <footer class="footer mt-5 py-3 bg-light">
+    <footer class="footer mt-5 py-3">
         <div class="container text-center">
-            <small class="text-muted">Powered by EasyShares &copy; 2024</small>
+            <small>Powered by EasyShare &copy; 2024</small>
         </div>
     </footer>
 

@@ -16,6 +16,7 @@
        newFileInput.name = "files";
        newFileInput.className = "form-control mb-3"; // Add Bootstrap class
        newFileInput.required = true;
+       newFileInput.multiple = true;
 
        // Check for duplicate files
        newFileInput.addEventListener("change", (event) => checkForDuplicate(event.target));

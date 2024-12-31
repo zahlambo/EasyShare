@@ -7,6 +7,11 @@ body {
     color: var(--body-text);
 }
 
+.nav-link-color {
+    color: var(--body-text);
+    text-decoration: none;
+}
+
 h1 {
     color: var(--heading-color);
 }
@@ -44,4 +49,7 @@ body.dark-mode {
     --footer-bg: #343a40;
     --footer-text: #f8f9fa;
     --progress-bar-text: #000;
+    --container-bg: #343a40;
+    --text-center: #f8f9fa;
+
 }
