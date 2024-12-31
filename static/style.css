@@ -1,82 +1,47 @@
 /* General Styling */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    background-color: var(--body-bg);
+    color: var(--body-text);
 }
 
-/* Header Styling */
 h1 {
-    color: #333;
-    text-align: center;
+    color: var(--heading-color);
 }
 
-/* Form Styling */
-form {
-    margin-top: 20px;
-    text-align: center;
+.navbar {
+    background-color: var(--navbar-bg) !important;
 }
 
-form input[type="file"] {
-    margin-bottom: 20px;
+.footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
 }
 
-form button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+/* Progress bar styling */
+#progress-bar {
+    color: var(--progress-bar-text);
 }
 
-form button:hover {
-    background-color: #0056b3;
+/* Dark Mode Variables */
+:root {
+    --body-bg: #f8f9fa;
+    --body-text: #212529;
+    --heading-color: #333;
+    --navbar-bg: #ffffff;
+    --footer-bg: #f8f9fa;
+    --footer-text: #212529;
+    --progress-bar-text: #fff;
 }
 
-/* Uploaded Link Styling */
-#uploaded-link {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #eaf4ff;
-    border: 1px solid #007bff;
-    border-radius: 4px;
-    color: #333;
-    word-wrap: break-word;
-}
-
-.copy-button {
-    margin-left: 10px;
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.copy-button:hover {
-    background-color: #0056b3;
-}
-
-/* Styling the file list */
-.file-list {
-    list-style-type: none;
-    padding: 0;
-}
-
-.file-item {
-    margin: 10px 0;
-}
-
-.file-item a {
-    text-decoration: none;
-    color: #007bff;
-}
-
-.file-item a:hover {
-    text-decoration: underline;
-    color: #0056b3;
+body.dark-mode {
+    --body-bg: #212529;
+    --body-text: #f8f9fa;
+    --heading-color: #f8f9fa;
+    --navbar-bg: #343a40;
+    --footer-bg: #343a40;
+    --footer-text: #f8f9fa;
+    --progress-bar-text: #000;
 }

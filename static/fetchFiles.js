@@ -1,13 +1,13 @@
-// Extract 'unique_id' from the URL path
+// Extract URL's 'unique_id'
 const pathParts = window.location.pathname.split("/");
-const uniqueId = pathParts[pathParts.length - 1]; // Get the last part of the URL (e.g., /files/<unique_id>)
+const uniqueId = pathParts[pathParts.length - 1]; // Last part of the URL (e.g., /files/<unique_id>)
 
 const fileListContainer = document.getElementById("file-list-container");
 const statusMessage = document.getElementById("status-message");
 
 if (!uniqueId) {
-    // If no 'id' parameter is present in the URL, show an error
-    statusMessage.textContent = "Invalid or missing link. Please use a valid shared link.";
+    // If no 'id' parameter is in URL, show an error
+    statusMessage.innerHTML = `<div class="alert alert-danger">Invalid or missing link. Please use a valid shared link.</div>`;
 } else {
     // Fetch the files associated with the unique_id
     fetch(`/files-json/${uniqueId}`)
@@ -18,43 +18,32 @@ if (!uniqueId) {
             return response.json();
         })
         .then(data => {
-            // Check if files exist in the response
+            // Check if files exist
             if (data.files && data.files.length > 0) {
-                // Hide the status message
                 statusMessage.style.display = "none";
 
-                // Create a list to display the files
-                const fileList = document.createElement("ul");
-                fileList.classList.add("file-list");
+                // Create a Bootstrap list group
+                const fileList = document.createElement("div");
+                fileList.classList.add("list-group");
 
                 // Iterate over each file object in the response
                 data.files.forEach(file => {
-                    // Create a list item for each file
-                    const listItem = document.createElement("li");
-                    listItem.classList.add("file-item");
+                    const listItem = document.createElement("a");
+                    listItem.classList.add("list-group-item", "list-group-item-action"); // Bootstrap classes
+                    listItem.href = file.download_link;
+                    listItem.textContent = file.filename;
+                    listItem.target = "_blank";
 
-                    // Create an anchor tag for downloading the file
-                    const fileLink = document.createElement("a");
-                    fileLink.href = file.download_link; // Use the provided download link
-                    fileLink.textContent = file.filename; // Display the file name
-                    fileLink.target = "_blank"; // Open the link in a new tab
-
-                    // Append the anchor tag to the list item
-                    listItem.appendChild(fileLink);
-
-                    // Append the list item to the file list
                     fileList.appendChild(listItem);
                 });
 
-                // Append the rendered file list to the container
                 fileListContainer.appendChild(fileList);
             } else {
-                // No files were found for this ID
-                statusMessage.textContent = "No files found for this link.";
+                statusMessage.innerHTML = `<div class="alert alert-warning">No files found for this link.</div>`;
             }
         })
         .catch(error => {
             console.error("Error loading files:", error);
-            statusMessage.textContent = "Failed to load files. Please try again later.";
+            statusMessage.innerHTML = `<div class="alert alert-danger">Failed to load files. Please try again later.</div>`;
         });
 }
