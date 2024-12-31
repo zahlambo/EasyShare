@@ -1,0 +1,82 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+/* Header Styling */
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+/* Form Styling */
+form {
+    margin-top: 20px;
+    text-align: center;
+}
+
+form input[type="file"] {
+    margin-bottom: 20px;
+}
+
+form button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+/* Uploaded Link Styling */
+#uploaded-link {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #eaf4ff;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.copy-button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.copy-button:hover {
+    background-color: #0056b3;
+}
+
+/* Styling the file list */
+.file-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.file-item {
+    margin: 10px 0;
+}
+
+.file-item a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.file-item a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
