@@ -1,16 +1,17 @@
-import contextlib
-from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
-import os
-from fastapi.responses import FileResponse
-from fastapi import File, UploadFile
-from starlette.middleware.cors import CORSMiddleware
-from datetime import datetime, timedelta
-import uuid
 import asyncio
+import contextlib
+import os
+import uuid
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta
 
+from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse
+
+from src.routes.auth import router as auth_router
 
 UPLOAD_DIR = "uploaded_files"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -133,24 +134,6 @@ async def download_file(unique_id: str, file_name: str):
         filename=original_filename
     )
 
-#
-# @app.get("/download/{file_id}")
-# async def download_file(file_id: str):
-#     search_result = [
-#         f for f in os.listdir(UPLOAD_DIR) if f"'@@@'{file_id}" in f
-#     ]
-#     if not search_result:
-#         raise HTTPException(status_code=404, detail="File not found")
-#
-#     file_name = search_result[0]
-#     file_path = os.path.join(UPLOAD_DIR, file_name)
-#     original_filename = file_name.split("'@@@'")[0]
-#     return FileResponse(
-#         file_path,
-#         media_type="application/octet-stream",
-#         filename=original_filename
-#     )
 
-
+app.include_router(auth_router)
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
-# app.mount("/", StaticFiles(directory="files", html=True), name="files")

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6e7fdb, #85c9f7);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        .form-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .toggle-link {
+            color: #007BFF;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+        .forgot-password {
+            margin-top: 10px;
+        }
+        .forgot-password button {
+            background: none;
+            color: #007BFF;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+        .forgot-password button:hover {
+            text-decoration: none;
+        }
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 22px;
+            }
+            .form-group input, .form-group button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2 id="form-title">Login</h2>
+
+    <!-- Login Form -->
+    <form id="login-form" action="/login" method="POST" style="display: block;">
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <div class="forgot-password">
+            <button type="button" onclick="forgotPassword()">Forgot Password?</button>
+        </div>
+        <div class="form-group">
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" action="/register" method="POST" style="display: none;">
+        <div class="form-group">
+            <input type="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="confirm-password" placeholder="Confirm Password" required>
+        </div>
+        <div class="form-group">
+            <button type="submit">Register</button>
+        </div>
+    </form>
+
+    <div class="toggle-link">
+        <span id="toggle-link-text" onclick="toggleForm()">Don't have an account? Register</span>
+    </div>
+</div>
+
+<script>
+    function toggleForm() {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const formTitle = document.getElementById('form-title');
+        const toggleLinkText = document.getElementById('toggle-link-text');
+
+        if (loginForm.style.display === 'block') {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            formTitle.innerHTML = 'Register';
+            toggleLinkText.innerHTML = 'Already have an account? Login';
+        } else {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            formTitle.innerHTML = 'Login';
+            toggleLinkText.innerHTML = 'Don\'t have an account? Register';
+        }
+    }
+
+    function forgotPassword() {
+        alert("Forgot password functionality is not implemented.");
+    }
+</script>
+
+</body>
+</html>
+s
