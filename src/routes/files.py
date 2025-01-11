@@ -70,17 +70,25 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...), db
 
 
 @router.get("/json/{unique_id}")
-async def get_files_json(unique_id: str):
+async def get_files_json(unique_id: str, db: Session = Depends(get_db)):
     # Find files matching the unique_id
-    search_results = [
-        f for f in os.listdir(UPLOAD_DIR) if f"'@@@'{unique_id}" in f
-    ]
-    if not search_results:
+    query = text("SELECT * FROM shared_files WHERE file_id = :file_id")
+    values = {"file_id": unique_id}
+    
+    # Execute the query
+    result = db.execute(query, values)
+    columns = result.keys()  
+    files = result.fetchall()
+    if not result:
         raise HTTPException(status_code=404, detail="No files found for this link")
-
+    
+    # Format results correctly as dictionaries
+    search_results = [dict(zip(columns, file)) for file in files]  # Use .items() to get key-value pairs
+    
+    # Prepare the response
     files = []
     for file in search_results:
-        original_filename = file.split("'@@@'")[0]  # Clean up the filename
+        original_filename = file["filename"]
         download_link = f"/files/download/{unique_id}/{original_filename}"  # Create the proper download link
         files.append({
             "filename": original_filename,
@@ -101,10 +109,19 @@ async def serve_files_html(unique_id: str):
 
 
 @router.get("/download/{unique_id}/{file_name}")
-async def download_file(unique_id: str, file_name: str):
+async def download_file(unique_id: str, file_name: str ,db: Session = Depends(get_db)):
+
+    query = text("SELECT * FROM shared_files WHERE file_id = :file_id")
+    values = {"file_id": unique_id}
+    
+    # Execute the query
+    result = db.execute(query, values)
+    columns = result.keys()  
+    files = result.fetchall()    
+    if not result:
+        raise HTTPException(status_code=404, detail="No files found for this link")
     search_result = [
-        f for f in os.listdir(UPLOAD_DIR)
-        if f"'@@@'{unique_id}" in f and file_name in f
+        [dict(zip(columns, file)) for file in files]
     ]
     if not search_result:
         raise HTTPException(status_code=404, detail="File not found")
