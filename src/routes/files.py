@@ -35,12 +35,7 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...), db
     else:
         user_id = 0 # This is a default guest user inserted manually in database.
     
-
     for file in files:
-        # Save each file with a unique composite filename but associate with the same unique_id
-        file_path = os.path.join(UPLOAD_DIR, unique_id)
-        with open(file_path, "wb") as f:
-            f.write(await file.read())
         
         filesize = file.size
 
@@ -60,6 +55,16 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...), db
         }
         db.execute(query, values)
         db.commit()
+        # Now retrieve the last inserted ID using LAST_INSERT_ID()
+        last_inserted_id_query = text("SELECT LAST_INSERT_ID()")
+        result = db.execute(last_inserted_id_query)
+        inserted_id = result.scalar() 
+
+        # Save each file with a unique composite filename but associate with the same tabe_id
+        file_path = os.path.join(UPLOAD_DIR, inserted_id.__str__())
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+    
     file_link = f"/files/serve/{unique_id}"  # One unique link for all the files
     return {"message": "Files uploaded successfully", "file_link": file_link}
 
