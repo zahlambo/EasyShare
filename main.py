@@ -1,19 +1,18 @@
 import asyncio
 import contextlib
 import os
-import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import HTMLResponse
 
 from src.routes.auth import router as auth_router
 from src.routes.files import router as files_router
+from src.routes.html import router as html_router
 
 load_dotenv()
 
@@ -72,4 +71,9 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(files_router)
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+# This should always be at the bottom.
+app.include_router(html_router)
+
+# Mount static files directory
+app.mount("/static", StaticFiles(directory="src/static"), name="static")

@@ -1,8 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, status, Response, Request
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, Depends, status, Response, Form
 from fastapi.responses import JSONResponse
-from datetime import timedelta
-
+from sqlalchemy.orm import Session
 from src.database.database import get_db
 from src.database.models import User
 from src.schemas.schemas import UserLogin, UserRegister, Token
@@ -19,20 +17,29 @@ COOKIE_MAX_AGE = 60 * 30  # 30 minutes
 COOKIE_DOMAIN = "localhost"  # Update to your domain (e.g., example.com)
 COOKIE_PATH = "/"
 COOKIE_SECURE = False  # Set to True for production (HTTPS)
-COOKIE_HTTP_ONLY = True
-COOKIE_SAMESITE = "Strict"  # Can be "Lax" or "Strict"
+COOKIE_HTTP_ONLY = False
+COOKIE_SAMESITE = "Lax"  # Can be "Lax" or "Strict"
 
 # Register new user
 @router.post("/register", response_model=Token)
-async def register_user(user: UserRegister, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
+async def register_user(
+    name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    if password != confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+    
+    db_user = db.query(User).filter(User.email == email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    hashed_password = hash_password(user.password)
+    hashed_password = hash_password(password)
     new_user = User(
-        name=user.name,
-        email=user.email,
+        name=name,
+        email=email,
         password=hashed_password,
         created_date=get_current_timestamp(),
         is_active=True
@@ -55,10 +62,14 @@ async def register_user(user: UserRegister, db: Session = Depends(get_db)):
 
 # Login user and generate JWT token
 @router.post("/login", response_model=Token)
-async def login_user(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
+async def login_user(
+    email: str = Form(...),
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    db_user = db.query(User).filter(User.email == email).first()
 
-    if db_user is None or not verify_password(user.password, db_user.password):
+    if db_user is None or not verify_password(password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create JWT token
@@ -72,9 +83,3 @@ async def login_user(user: UserLogin, db: Session = Depends(get_db)):
         httponly=COOKIE_HTTP_ONLY, samesite=COOKIE_SAMESITE
     )
     return response
-
-# Logout user by clearing the cookie
-@router.post("/logout")
-async def logout_user(response: Response):
-    response.delete_cookie(COOKIE_NAME, domain=COOKIE_DOMAIN, path=COOKIE_PATH)
-    return {"msg": "Successfully logged out"}

@@ -24,6 +24,13 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="/files">Shared Files</a>
                     </li>
+                    <!-- Login/Logout Buttons -->
+                    <li class="nav-item" id="login-btn" style="display: none;">
+                        <a class="nav-link" href="/login">Log In</a>
+                    </li>
+                    <li class="nav-item" id="logout-btn" style="display: none;">
+                        <a class="nav-link" href="/logout">Log Out</a>
+                    </li>
                 </ul>
                 <!-- Dark mode toggle switch -->
                 <div class="form-check form-switch ms-3">
@@ -52,5 +59,30 @@
     <!-- JavaScript files -->
     <script src="/fetchFiles.js" defer></script> <!-- Existing JavaScript for fetching file list -->
     <script src="/dark-mode.js" defer></script> <!-- Add the dark-mode script -->
+    
+    <script>
+        // Function to check if the user is logged in by checking the presence of the JWT token
+        function checkLoginStatus() {
+            const token = document.cookie.split('; ').find(row => row.startsWith('access_token='));
+            const isLoggedIn = token !== undefined;
+
+            if (isLoggedIn) {
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'inline-block';
+            } else {
+                document.getElementById('login-btn').style.display = 'inline-block';
+                document.getElementById('logout-btn').style.display = 'none';
+            }
+        }
+
+        // Check login status when the page loads
+        window.onload = checkLoginStatus;
+
+        // Log out user (clear the cookie)
+        document.getElementById('logout-btn')?.addEventListener('click', function() {
+            document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            window.location.href = '/';  // Redirect to the home page after logging out
+        });
+    </script>
 </body>
 </html>
