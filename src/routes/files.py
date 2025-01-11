@@ -94,6 +94,25 @@ async def list_files(request: Request, db: Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=401, detail="Unauthorized access")
 
+@router.delete("/{file_id}")
+async def delete_file(file_id: str, db: Session = Depends(get_db)):
+    # Check if the file exists
+    query = text("SELECT * FROM shared_files WHERE file_id = :file_id")
+    result = db.execute(query, {"file_id": file_id})
+    file = result.fetchone()
+    if not file:
+        raise HTTPException(status_code=404, detail="File not found")
+
+    # Delete the file from the database if it exists
+    delete_query = text("DELETE FROM shared_files WHERE file_id = :file_id")
+    db.execute(delete_query, {"file_id": file_id})
+    db.commit()
+
+    # Delete the file from the filesystem
+    file_path = os.path.join(UPLOAD_DIR, file.id)
+    os.remove(file_path)
+
+    return {"message": "File deleted successfully"}
 
 @router.get("/json/{unique_id}")
 async def get_files_json(unique_id: str, db: Session = Depends(get_db)):
