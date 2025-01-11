@@ -31,3 +31,10 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
 # Function to get the current timestamp
 def get_current_timestamp() -> datetime:
     return datetime.utcnow()
+
+def decrypt_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None

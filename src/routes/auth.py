@@ -73,7 +73,7 @@ async def login_user(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create JWT token
-    access_token = create_access_token(data={"sub": db_user.email})
+    access_token = create_access_token(data={"sub": db_user.email, "id": db_user.user_id})
     
     # Set the JWT token in an HTTP-only cookie
     response = JSONResponse(content={"msg": "Login successful"})

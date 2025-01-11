@@ -1,10 +1,15 @@
-from datetime import datetime
 import os
 import uuid
-from dotenv import load_dotenv
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse
+from datetime import datetime
 
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+
+from src.database.database import get_db
+from src.utility.utils import decrypt_token
 
 load_dotenv()
 
@@ -16,20 +21,45 @@ router = APIRouter(
 )
 
 @router.post("/")
-async def upload_files(files: list[UploadFile] = File(...)):
+async def upload_files(request: Request, files: list[UploadFile] = File(...), db: Session = Depends(get_db)):
     if not files:
         raise HTTPException(status_code=400, detail="No files provided")
 
-    unique_id = str(uuid.uuid4())  # Generate a single unique ID for the set of files
+    unique_id = str(uuid.uuid4())
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    # For checking weather or not is the user logged in
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        user_id = decrypt_token(access_token).get("id")
+    else:
+        user_id = 0 # This is a default guest user inserted manually in database.
+    
 
     for file in files:
         # Save each file with a unique composite filename but associate with the same unique_id
-        filename = f"{file.filename}'@@@'{unique_id}'___'{timestamp}"
-        file_path = os.path.join(UPLOAD_DIR, filename)
+        file_path = os.path.join(UPLOAD_DIR, unique_id)
         with open(file_path, "wb") as f:
             f.write(await file.read())
+        
+        filesize = file.size
 
+        # Insert the file details into the database
+        # columns: id, file_id, filename, user_id, uploaded_at, is_public, size
+        query = text(
+            "INSERT INTO shared_files (file_id, filename, user_id, uploaded_at, is_public, size) "
+            "VALUES (:file_id, :filename, :user_id, :uploaded_at, :is_public, :size)"
+        )
+        values = {
+            "file_id": unique_id,
+            "filename": file.filename,
+            "user_id": user_id,
+            "uploaded_at": timestamp,
+            "is_public": True if user_id == 0 else False,
+            "size": filesize
+        }
+        db.execute(query, values)
+        db.commit()
     file_link = f"/files/serve/{unique_id}"  # One unique link for all the files
     return {"message": "Files uploaded successfully", "file_link": file_link}
 
@@ -59,7 +89,7 @@ async def get_files_json(unique_id: str):
 @router.get("/serve/{unique_id}", response_class=HTMLResponse)
 async def serve_files_html(unique_id: str):
     # Serve the static HTML page for files
-    with open("static/files.html", "r") as f:
+    with open("src/templates/files.html", "r") as f:
         print(f)
         html_content = f.read()
         return HTMLResponse(content=html_content, status_code=200)
