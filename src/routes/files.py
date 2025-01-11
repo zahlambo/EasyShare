@@ -101,8 +101,8 @@ async def delete_file(file_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="File not found")
 
     # Delete the file from the database if it exists
-    delete_query = text("DELETE FROM shared_files WHERE file_id = :file_id")
-    db.execute(delete_query, {"file_id": file_id})
+    delete_query = text("DELETE FROM shared_files WHERE id = :id")
+    db.execute(delete_query, {"id": file.id})
     db.commit()
 
     # Delete the file from the filesystem
