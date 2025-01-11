@@ -55,8 +55,8 @@
         </div>
 
         <!-- Container for file list -->
-        <div id="link-container" class="mt-4 d-none">
-            <h2>Uploaded Files</h2>
+        <div id="link-container" class="mt-47">
+            <h2 class="d-none">Uploaded Files</h2>
             <div id="file-list">
                 <!-- Groups of files will be dynamically added here -->
             </div>
@@ -150,6 +150,7 @@
                     deleteButton.addEventListener('click', function() {
                         // Remove the list item from the view
                         listGroup.removeChild(listItem);
+                        removeFile(fileData.file_id);
                     });
 
                     // Append file link, timestamp, and delete button to list item
@@ -190,6 +191,21 @@
                 return;
             }
             console.log("User is logged in: ", isLoggedIn);
+        }
+
+        function removeFile(fileId) {
+            fetch(`/files/${fileId}`, {
+                method: 'DELETE',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(responseData => {
+                console.log(responseData);
+            })
+            .catch(error => console.error('Error:', error));
         }
 
         // Display the file list when the page loads
