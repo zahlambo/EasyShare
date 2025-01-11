@@ -38,10 +38,11 @@
 
     <div class="container mt-5">
         <h1 class="text-center text-primary mb-4">EasyShare</h1>
-        <form id="upload-form" class="p-4 border rounded shadow-sm">
+        <form id="upload-form" class="p-4 border rounded shadow-sm" enctype="multipart/form-data">
             <div id="file-input-container" class="mb-3">
                 <label for="file-upload" class="form-label">Select Files:</label>
                 <input type="file" name="files" class="form-control" id="file-upload" multiple required />
+                <small id="file-size-warning" class="text-danger" style="display: none;">The file is too large. Please upload files smaller than 5MB.</small>
             </div>
             <button type="button" id="add-file-button" class="btn btn-sm btn-secondary mb-3">Add Another File</button>
             <br />
