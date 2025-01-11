@@ -3,9 +3,12 @@ import contextlib
 import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+from src.database.database import get_db
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.cors import CORSMiddleware
@@ -22,27 +25,20 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Cleanup task for deleting old files
 async def cleanup_old_files():
+    db = next(get_db())
     while True:
         now = datetime.now()
-        for filename in os.listdir(UPLOAD_DIR):
-            file_path = os.path.join(UPLOAD_DIR, filename)
+        query = text("SELECT id FROM shared_files WHERE TIMESTAMPDIFF(HOUR, uploaded_at, NOW()) > 4;")
+        result = db.execute(query).fetchall()
+        result[:] = [str(item[0]) for item in result]
 
-            # Ensure we only handle files
-            if os.path.isfile(file_path):
-                try:
-                    # Extract timestamp from the filename
-                    timestamp_str = filename.split("'___'")[-1]
-                    file_time = datetime.strptime(timestamp_str, "%Y%m%d%H%M%S")
-
-                    # Check if the file is older than 8 hours
-                    if now - file_time > timedelta(hours=32) and os.path.exists(
-                            file_path
-                    ):
-                        os.remove(file_path)
-                        print(f"Deleted old file: {filename}")
-                except Exception as e:
-                    print(f"Error processing file {filename}: {e}")
-
+        for file_id in result:
+            file_path = os.path.join(UPLOAD_DIR, file_id)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"Deleted old file: {file_id}")
+        db.execute("DELETE FROM shared_files WHERE TIMESTAMPDIFF(HOUR, uploaded_at, NOW()) > 4;")
+        db.commit()
         await asyncio.sleep(3600)  # Wait for 1 hour before running again
 
 
