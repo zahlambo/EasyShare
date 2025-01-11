@@ -86,9 +86,6 @@ async def list_files(request: Request, db: Session = Depends(get_db)):
         
         files = result.fetchall()
 
-        if not files:
-            raise HTTPException(status_code=404, detail="No files found")
-
         # Convert each row to a dictionary using column names
         return [dict(zip(columns, file)) for file in files]
     else:
