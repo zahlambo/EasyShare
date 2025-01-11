@@ -115,10 +115,22 @@ async def delete_file(file_id: str, db: Session = Depends(get_db)):
     return {"message": "File deleted successfully"}
 
 @router.get("/json/{unique_id}")
-async def get_files_json(unique_id: str, db: Session = Depends(get_db)):
+async def get_files_json(request: Request,unique_id: str, db: Session = Depends(get_db)):
     # Find files matching the unique_id
-    query = text("SELECT * FROM shared_files WHERE file_id = :file_id")
-    values = {"file_id": unique_id}
+
+     # For checking weather or not is the user logged in
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        user_id = decrypt_token(access_token).get("id")
+        query = text("SELECT * FROM shared_files WHERE file_id = :file_id AND user_id = :user_id")
+        values = {"file_id": unique_id, "user_id": user_id}
+    else:
+        user_id = 0 # This is a default guest user inserted manually in database.
+        query = text("SELECT * FROM shared_files WHERE file_id = :file_id AND user_id = :user_id")
+        values = {"file_id": unique_id, "user_id": user_id}
+
+    # query = text("SELECT * FROM shared_files WHERE file_id = :file_id")
+    # values = {"file_id": unique_id}
     
     # Execute the query
     result = db.execute(query, values)
@@ -171,9 +183,8 @@ async def download_file(unique_id: str, file_name: str ,db: Session = Depends(ge
     if not search_result:
         raise HTTPException(status_code=404, detail="File not found")
 
-    file_name = search_result[0]
-    file_path = os.path.join(UPLOAD_DIR, file_name)
-    original_filename = file_name.split("'@@@'")[0]
+    file_path = os.path.join(UPLOAD_DIR, str(search_result[0][0]["id"]))
+    original_filename = search_result[0][0]["filename"]
     return FileResponse(
         file_path,
         media_type="application/octet-stream",
