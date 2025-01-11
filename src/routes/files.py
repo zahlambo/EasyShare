@@ -64,6 +64,32 @@ async def upload_files(request: Request, files: list[UploadFile] = File(...), db
     return {"message": "Files uploaded successfully", "file_link": file_link}
 
 
+@router.get("/list")
+async def list_files(request: Request, db: Session = Depends(get_db)):
+    # Try to get the user id
+    user_id = decrypt_token(request.cookies.get("access_token")).get("id")
+
+    # If the user is logged in, get the files uploaded by the user
+    if user_id:
+        query = text(
+            "SELECT * FROM shared_files WHERE user_id = :user_id"
+        )
+        result = db.execute(query, {"user_id": user_id})
+
+        # Get column names from the result
+        columns = result.keys()
+        
+        files = result.fetchall()
+
+        if not files:
+            raise HTTPException(status_code=404, detail="No files found")
+
+        # Convert each row to a dictionary using column names
+        return [dict(zip(columns, file)) for file in files]
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized access")
+
+
 @router.get("/json/{unique_id}")
 async def get_files_json(unique_id: str):
     # Find files matching the unique_id
