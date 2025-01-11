@@ -10,7 +10,7 @@ if (!uniqueId) {
     statusMessage.innerHTML = `<div class="alert alert-danger">Invalid or missing link. Please use a valid shared link.</div>`;
 } else {
     // Fetch the files associated with the unique_id
-    fetch(`/files-json/${uniqueId}`)
+    fetch(`/files/json/${uniqueId}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Error fetching files: ${response.statusText}`);

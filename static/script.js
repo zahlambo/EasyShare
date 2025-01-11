@@ -76,7 +76,7 @@
        progressContainer.style.display = "block";
 
        const xhr = new XMLHttpRequest();
-       xhr.open("POST", "/upload/");
+       xhr.open("POST", "/files/");
 
        // Update progress bar during upload
        xhr.upload.onprogress = (event) => {
