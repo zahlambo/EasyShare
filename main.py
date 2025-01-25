@@ -133,24 +133,4 @@ async def download_file(unique_id: str, file_name: str):
         filename=original_filename
     )
 
-#
-# @app.get("/download/{file_id}")
-# async def download_file(file_id: str):
-#     search_result = [
-#         f for f in os.listdir(UPLOAD_DIR) if f"'@@@'{file_id}" in f
-#     ]
-#     if not search_result:
-#         raise HTTPException(status_code=404, detail="File not found")
-#
-#     file_name = search_result[0]
-#     file_path = os.path.join(UPLOAD_DIR, file_name)
-#     original_filename = file_name.split("'@@@'")[0]
-#     return FileResponse(
-#         file_path,
-#         media_type="application/octet-stream",
-#         filename=original_filename
-#     )
-
-
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
-# app.mount("/", StaticFiles(directory="files", html=True), name="files")

@@ -1,4 +1,4 @@
-   // Get DOM elements
+// Get DOM elements
    const form = document.getElementById("upload-form");
    const fileInputContainer = document.getElementById("file-input-container");
    const addFileButton = document.getElementById("add-file-button");
@@ -11,6 +11,9 @@
 
    // Add event listener to "Add Another File" button
    addFileButton.addEventListener("click", () => {
+       const fileInputWrapper = document.createElement("div");
+       fileInputWrapper.className = "file-input-wrapper";
+
        const newFileInput = document.createElement("input");
        newFileInput.type = "file";
        newFileInput.name = "files";
@@ -18,9 +21,19 @@
        newFileInput.required = true;
        newFileInput.multiple = true;
 
+       const removeButton = document.createElement("span");
+       removeButton.className = "remove-file-button";
+       removeButton.textContent = "Remove";
+       removeButton.addEventListener("click", () => {
+           fileInputWrapper.remove();
+       });
+
        // Check for duplicate files
        newFileInput.addEventListener("change", (event) => checkForDuplicate(event.target));
-       fileInputContainer.appendChild(newFileInput);
+
+       fileInputWrapper.appendChild(newFileInput);
+       fileInputWrapper.appendChild(removeButton);
+       fileInputContainer.appendChild(fileInputWrapper);
    });
 
    function checkForDuplicate(input) {

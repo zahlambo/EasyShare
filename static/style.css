@@ -30,6 +30,13 @@ h1 {
     color: var(--progress-bar-text);
 }
 
+/* Styling for remove file button */
+.remove-file-button {
+    margin-left: 10px;
+    color: red;
+    cursor: pointer;
+}
+
 /* Dark Mode Variables */
 :root {
     --body-bg: #f8f9fa;
